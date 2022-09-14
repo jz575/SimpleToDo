@@ -8,11 +8,14 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 
 //bridge that tells the recycler view how to display data
-class TaskItemAdapter(val listOfItems: List<String>, val longClickListener: OnLongClickListener) : RecyclerView.Adapter<TaskItemAdapter.ViewHolder>(){
+class TaskItemAdapter(val listOfItems: List<String>, val longClickListener: OnLongClickListener, val clickListener: onClickListener) : RecyclerView.Adapter<TaskItemAdapter.ViewHolder>(){
 
     //the list is initialized in main so we use an interface to change it from the adapter
     interface OnLongClickListener {
         fun onItemLongClicked(position: Int)
+    }
+    interface onClickListener {
+        fun onItemClicked(position: Int)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -39,10 +42,15 @@ class TaskItemAdapter(val listOfItems: List<String>, val longClickListener: OnLo
         val textView: TextView
         init {
             textView = itemView.findViewById(android.R.id.text1)
-
+            //can long click to remove item
             itemView.setOnLongClickListener {
                 //Log.i("Pepper", "Long click " + adapterPosition)
                 longClickListener.onItemLongClicked(adapterPosition)
+                true
+            }
+            //can click to edit item
+            itemView.setOnClickListener {
+                clickListener.onItemClicked(adapterPosition)
                 true
             }
         }
