@@ -1,10 +1,13 @@
 package com.example.simpletodo
 
+import android.content.DialogInterface
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.LayoutInflater
 import android.widget.Button
 import android.widget.EditText
+import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import org.apache.commons.io.FileUtils
@@ -33,15 +36,32 @@ class MainActivity : AppCompatActivity() {
                 saveItems()
             }
         }
+        fun showEditTextDialog(position: Int) {
+            val builder = AlertDialog.Builder(this)
+            val inflater = layoutInflater
+            val dialogLayout = inflater.inflate(R.layout.edit_text_layout,null)
+            val editText = dialogLayout.findViewById<EditText>(R.id.et_editText)
+
+            with(builder) {
+                setTitle("Edit task " + (position+1))
+                setPositiveButton("Save"){dialog, which ->
+                    listOfTasks.set(position,editText.text.toString())
+                    adapter.notifyItemChanged(position)
+                }
+                setNegativeButton("Cancel"){dialog, which ->
+                    Log.i("Pepper","Negative Button Pressed")
+                }
+                setView(dialogLayout)
+                show()
+            }
+        }
         //items can be edited by clicking
         val onClickListener = object : TaskItemAdapter.onClickListener {
             override fun onItemClicked(position: Int) {
-                //prompt user to edit
-                findViewById<EditText>(R.id.addTaskField).hint = "Edit"
-                findViewById<Button>(R.id.button).text = "Save"
-                helperPosition = position
+                 showEditTextDialog(position)
             }
         }
+
 
         //populate list based on file
         loadItems()
@@ -70,22 +90,10 @@ class MainActivity : AppCompatActivity() {
         findViewById<Button>(R.id.button).setOnClickListener {
             //get text from edit text field
             val userInputtedTask = inputTextField.text.toString()
-            //modify existing listener to account for editing
-            if (inputTextField.hint.toString() == "Edit"){
-                //Log.i("Pepper","this is being detected")
-                //change item at position
-                listOfTasks.set(helperPosition,userInputtedTask)
-                adapter.notifyItemChanged(helperPosition)
-                //change back values
-                findViewById<EditText>(R.id.addTaskField).hint = "Add a task"
-                findViewById<Button>(R.id.button).text = "Add"
-            }
-            else {
-                //add string to list of tasks: listOfTasks
-                listOfTasks.add(userInputtedTask)
-                //notify the adapter to know that data has been updated
-                adapter.notifyItemInserted(listOfTasks.size - 1)
-            }
+            //add string to list of tasks: listOfTasks
+            listOfTasks.add(userInputtedTask)
+            //notify the adapter to know that data has been updated
+            adapter.notifyItemInserted(listOfTasks.size - 1)
             //clear text field
             inputTextField.setText("")
             //save new tasks to file
