@@ -58,7 +58,7 @@ class MainActivity : AppCompatActivity() {
         //items can be edited by clicking
         val onClickListener = object : TaskItemAdapter.onClickListener {
             override fun onItemClicked(position: Int) {
-                 showEditTextDialog(position)
+                showEditTextDialog(position)
             }
         }
 
