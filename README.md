@@ -33,4 +33,4 @@ The following **additional** features are implemented:
 
 Here's a walkthrough of implemented user stories:
 
-<img src='' />
+<img src='https://github.com/jz575/SimpleToDo/blob/main/app/src/main/res/tododemons.gif' />
